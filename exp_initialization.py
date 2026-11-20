@@ -2,15 +2,14 @@ import numpy as np
 import ot
 import time
 from utils import *
-from expcp import expcp
+from ecpmot import expcp
 from sinkhorn_mmot import sk_mmot
 import matplotlib.pyplot as plt
-from scipy.stats import gaussian_kde
 
 ## SETUP 
-rng = np.random.default_rng(42)
+rng = np.random.default_rng(0)
 
-n = [20, 20, 20, 20]
+n = [30, 30, 30, 30]
 r = 7
 dim = 2
 reg = 0.005
@@ -53,15 +52,14 @@ if SK:
     t1 = time.time()
     T_sk, _ = sk_mmot(C, a_list, reg, max_iter=15000, tol=1e-12) 
     t2 = time.time()
-    print("Time SK", t2-t1)
 
-for seed in range(10):
+for seed in range(50):
     ## K means init
     t1 = time.time()
     Qs, g, _ = expcp(Xs, a_list, r, reg, max_outer_iter=global_max_iter, tol=global_tol, seed=seed, verbose=verbose)
+    t2 = time.time()
     if compute_T:
         T_bary = cp_tensor_from_Qs(Qs, g)
-    t2 = time.time()
     times_bary.append(t2-t1)
     marg_bary.append(marginal_error(T_bary, a_list))
     res_bary.append(compute_objective_pairwise(Xs, Qs, g, C_scale))
@@ -72,6 +70,8 @@ for seed in range(10):
     if compute_T:
         T_bary_rdm = cp_tensor_from_Qs(Qs, g)
     t2 = time.time()
+    if compute_T:
+        T_bary_rdm = cp_tensor_from_Qs(Qs, g)
     times_bary_rdm.append(t2-t1)
     marg_bary_rdm.append(marginal_error(T_bary_rdm, a_list))
     res_bary_rdm.append(compute_objective_pairwise(Xs, Qs, g, C_scale))
@@ -107,16 +107,12 @@ mean1, std1 = np.mean(data1), np.std(data1, ddof=1)
 mean2, std2 = np.mean(data2), np.std(data2, ddof=1)
 
 x = np.linspace(min(data1.min(), data2.min()),max(data1.max(), data2.max()),500)
-kde1 = gaussian_kde(data1)
-kde2 = gaussian_kde(data2)
 
 plt.figure(figsize=(9, 6))
 
 plt.hist(data1, bins=20, density=True, alpha=0.3,color="royalblue", label="Distribution kmeans")
 plt.hist(data2, bins=20, density=True, alpha=0.3,color="tomato", label="Distribution rdm")
 
-plt.plot(x, kde1(x), color="royalblue", linewidth=2)
-plt.plot(x, kde2(x), color="tomato", linewidth=2)
 
 plt.axvline(mean1, color="royalblue", linestyle="--",label=f"mean_kmeans = {mean1:.2f} ± {std1:.2f}")
 plt.axvline(mean2, color="tomato", linestyle="--",label=f"mean_rdm = {mean2:.2f} ± {std2:.2f}")
@@ -136,16 +132,10 @@ if save_datasets:
     mean2 = np.mean(data2)
     std2 = np.std(data2, ddof=1)
 
-    kde1 = gaussian_kde(data1)
-    kde2 = gaussian_kde(data2)
-
     xmin = min(data1.min(), data2.min())
     xmax = max(data1.max(), data2.max())
 
     x = np.linspace(xmin, xmax, 500)
-
-    y1 = kde1(x)
-    y2 = kde2(x)
 
     nbins = 20
 
@@ -157,8 +147,6 @@ if save_datasets:
     centers = (edges[:-1] + edges[1:]) / 2
     width = edges[1] - edges[0]
 
-    np.savetxt("kde_distribution1.dat",np.column_stack((x, y1)),header="x density")
-    np.savetxt("kde_distribution2.dat",np.column_stack((x, y2)),header="x density")
     np.savetxt("hist_distribution1.dat",np.column_stack((centers, hist1)),header="x density")
     np.savetxt("hist_distribution2.dat",np.column_stack((centers, hist2)),header="x density")
     print(  

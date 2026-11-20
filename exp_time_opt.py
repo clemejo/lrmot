@@ -2,8 +2,8 @@ import numpy as np
 import ot
 import time
 from utils import *
-from expcp import expcp
-from impcpmd import impcp_mirror_descent_pairwise
+from ecpmot import expcp
+from cpmot import impcp_mirror_descent_pairwise
 from sinkhorn_mmot import sk_mmot, greedy_sk_mmot
 from tuckmmot import tucker_mmot, evaluate_tucker, marginal_error_tucker
 

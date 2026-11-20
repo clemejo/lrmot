@@ -2,7 +2,7 @@ import numpy as np
 import ot
 import time
 from utils import *
-from expcp import expcp
+from ecpmot import expcp
 from tensorflow.keras.datasets import mnist
 import matplotlib.pyplot as plt
 
