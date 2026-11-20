@@ -2,11 +2,11 @@
 
 (Greedy) Sinkhorn sinkhorn_mmot.py
 
-EXPCP expcp.py
+eCPMOT ecpmot.py function expcp
 
-IMPCP impcp.py
+CPMOT cpmot.py function impcp_mirror_descent_pairwise or impcp_mirror_descent
 
-Tucker tuckmmot.py
+Tucker tuckmmot.py function tucker_mmot
 
 * Files to reproduce figures:
 
