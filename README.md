@@ -16,4 +16,6 @@ Figure 3 : exp_blobs.py
 
 Figures 4, 5 : exp_mnist.py
 
-Figure 8 : exp_initialization.py
+Figure 7 : exp_agents.py
+
+Figure 10 : exp_initialization.py
